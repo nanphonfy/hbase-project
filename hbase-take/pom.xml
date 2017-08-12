@@ -8,12 +8,26 @@
     <artifactId>hbase-take</artifactId>
     <version>new-1.0-SNAPSHOT</version>
 
+    <!-- 集中定义依赖版本号 -->
+    <properties>
+        <hbase-client.version>0.96.1.1-hadoop2</hbase-client.version>
+        <junit.version>4.12</junit.version>
+    </properties>
+
     <dependencies>
-        <!-- hbase-client -->
+        <!-- hbase-client 低版本客户端可以连接高版本服务端,反之可能不行-->
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase-client</artifactId>
-            <version>0.96.1.1-hadoop2</version>
+            <version>${hbase-client.version}</version>
+        </dependency>
+
+        <!-- 单元测试 -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -34,7 +48,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>cn.sibat.hbase.tool.E6Taxi</mainClass>
+                                    <mainClass>cn.sibat.hbase.take.action.RestoringData</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>

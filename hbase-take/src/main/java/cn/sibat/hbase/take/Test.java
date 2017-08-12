@@ -1,5 +1,7 @@
 package cn.sibat.hbase.take;
 
+import cn.sibat.hbase.take.util.StringUtil;
+
 import java.text.ParseException;
 
 /**

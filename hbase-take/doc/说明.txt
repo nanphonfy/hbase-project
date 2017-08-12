@@ -1,0 +1,115 @@
+原始数据示例：
+0000987741:16-11-26 19:25:00,3,36.958882331848145,0,0.0,3,36.95888,0,0.0,0,0.0,0,0.0,0,0.0
+0000987741:16-11-26 19:30:00,2,31.69884490966797,0,0.0,2,31.698845,0,0.0,0,0.0,0,0.0,0,0.0
+0000987741:16-11-26 19:35:00,6,25.435201781136648,0,0.0,6,25.435202,0,0.0,0,0.0,0,0.0,0,0.0
+0000987741:16-11-26 19:40:00,3,25.900360298156738,0,0.0,3,25.90036,0,0.0,0,0.0,0,0.0,0,0.0
+0000987741:16-11-26 19:45:00,2,21.937299251556396,0,0.0,2,21.9373,0,0.0,0,0.0,0,0.0,0,0.0
+0000987741:16-11-26 19:50:00,4,35.22253837585449,0,0.0,4,35.222538,0,0.0,0,0.0,0,0.0,0,0.0
+0000987741:16-11-26 19:55:00,1,37.170066833496094,0,0.0,1,37.170067,0,0.0,0,0.0,0,0.0,0,0.0
+0000987741:16-11-26 20:00:00,4,23.028654956817626,0,0.0,4,23.028656,0,0.0,0,0.0,0,0.0,0,0.0
+0000987741:16-11-26 20:05:00,2,29.824148178100586,0,0.0,2,29.824148,0,0.0,0,0.0,0,0.0,0,0.0
+0000987741:16-11-26 20:10:00,3,32.91759991645813,0,0.0,3,32.917603,0,0.0,0,0.0,0,0.0,0,0.0
+
+数据目录示例：
+[public@hadoop-1 File]$ pwd
+/home/public/hbaseOptimize/File
+[public@hadoop-1 File]$ ls
+Dataaa  Dataad  Dataag  Dataaj  Dataam  Dataap  Dataas  Dataav  Dataay  Databb  Databe  Databh  Databk  Databn  Databq  Databt  Databw  Databz  Datacc  Datacf  Dataci  Datacl  Dataco  Datacr  Datacu  Datacx  Datada  Datadd  Datadg  Datadj  Datadm  Datadp
+Dataab  Dataae  Dataah  Dataak  Dataan  Dataaq  Dataat  Dataaw  Dataaz  Databc  Databf  Databi  Databl  Databo  Databr  Databu  Databx  Dataca  Datacd  Datacg  Datacj  Datacm  Datacp  Datacs  Datacv  Datacy  Datadb  Datade  Datadh  Datadk  Datadn  Datadq
+Dataac  Dataaf  Dataai  Dataal  Dataao  Dataar  Dataau  Dataax  Databa  Databd  Databg  Databj  Databm  Databp  Databs  Databv  Databy  Datacb  Datace  Datach  Datack  Datacn  Datacq  Datact  Datacw  Datacz  Datadc  Datadf  Datadi  Datadl  Datado
+[public@hadoop-1 File]$ du -sh *
+836M	Dataaa
+826M	Dataab
+818M	Dataac
+834M	Dataad
+826M	Dataae
+829M	Dataaf
+829M	Dataag
+834M	Dataah
+830M	Dataai
+837M	Dataaj
+840M	Dataak
+841M	Dataal
+836M	Dataam
+841M	Dataan
+835M	Dataao
+834M	Dataap
+832M	Dataaq
+839M	Dataar
+838M	Dataas
+836M	Dataat
+845M	Dataau
+842M	Dataav
+840M	Dataaw
+826M	Dataax
+833M	Dataay
+835M	Dataaz
+840M	Databa
+840M	Databb
+834M	Databc
+836M	Databd
+843M	Databe
+840M	Databf
+829M	Databg
+806M	Databh
+830M	Databi
+835M	Databj
+835M	Databk
+834M	Databl
+827M	Databm
+829M	Databn
+836M	Databo
+875M	Databp
+849M	Databq
+858M	Databr
+864M	Databs
+860M	Databt
+855M	Databu
+871M	Databv
+875M	Databw
+870M	Databx
+872M	Databy
+868M	Databz
+869M	Dataca
+870M	Datacb
+866M	Datacc
+862M	Datacd
+867M	Datace
+852M	Datacf
+852M	Datacg
+854M	Datach
+857M	Dataci
+862M	Datacj
+863M	Datack
+867M	Datacl
+867M	Datacm
+863M	Datacn
+858M	Dataco
+861M	Datacp
+849M	Datacq
+872M	Datacr
+861M	Datacs
+858M	Datact
+861M	Datacu
+860M	Datacv
+856M	Datacw
+862M	Datacx
+860M	Datacy
+856M	Datacz
+855M	Datada
+855M	Datadb
+865M	Datadc
+859M	Datadd
+870M	Datade
+848M	Datadf
+857M	Datadg
+861M	Datadh
+864M	Datadi
+883M	Datadj
+868M	Datadk
+864M	Datadl
+854M	Datadm
+862M	Datadn
+860M	Datado
+861M	Datadp
+606M	Datadq

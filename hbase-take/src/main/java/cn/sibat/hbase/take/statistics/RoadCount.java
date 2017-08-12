@@ -1,7 +1,5 @@
 package cn.sibat.hbase.take.statistics;
 
-import cn.sibat.hbase.take.HBaseDAO;
-
 import java.io.*;
 import java.util.*;
 
