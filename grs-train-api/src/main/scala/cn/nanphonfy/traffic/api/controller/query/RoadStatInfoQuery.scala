@@ -14,7 +14,8 @@ class RoadStatInfoQuery(tableName:String) extends Queryable{
    */
   override def Query(roads: Iterable[String], start: String, end: String): String = {
     val qm=new QueryManager(tableName)
-    val data = qm.GetRoadsData(roads,start,end)
+//    val data = qm.GetRoadsData(roads, start, end)
+    val data = qm.GetRoadsDataSecond(roads,start,end)//新版
 
     //封装成JSON数据
     val results = data.map{case(road,records) => {

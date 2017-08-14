@@ -7,7 +7,6 @@ import argonaut.Argonaut._
 import argonaut.Json
 import cn.nanphonfy.traffic.api.model.RoadStatCrossFlow
 import cn.nanphonfy.traffic.api.util.BusRoads
-import org.siabt.traffic.api.model.RoadStat
 
 /**
   * 对固定道路截面公交流量的查询
@@ -18,7 +17,7 @@ class BusRoadsSortInfoQuery(tableName: String) extends Queryable {
       val name = road.name
       val qm = new QueryManager(tableName)
 //      val data = qm.GetRoadsData(roadsList, start, end)
-      val data = qm.GetRoadsDataSecond(roadsList, start, end)
+      val data = qm.GetRoadsDataSecond(roadsList, start, end)//新版
 //      println(data)
       val stat = new RoadStatCrossFlow(name, data.flatMap(_._2))
       //      println(stat.toJson())/by zsr

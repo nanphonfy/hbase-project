@@ -66,8 +66,8 @@ class QueryManager(tableName: String) {
     val data: Iterable[Iterable[RoadInfo]] = filled_roads.map(road => {
       val sf = new SimpleDateFormat("yy-MM-dd")
 
-//      var results = hbase_today.QueryTime(road + ":" + start, road + ":" + end, Seq("value", "vehicles")) //List(List(...),...)
-            var results = hbase_today.scanByColumnRangeFilter(road + ":" + start, road + ":" + end, Seq("value", "vehicles")) //List(MutableList(...))
+      var results = hbase_today.QueryTime(road + ":" + start, road + ":" + end, Seq("value", "vehicles")) //List(List(...),...)
+      //            var results = hbase_today.scanByColumnRangeFilter(road + ":" + start, road + ":" + end, Seq("value", "vehicles")) //List(MutableList(...))
       println("QueryManager GetRoadsData:" + results)
 
       val timeList = results.filter(!_.head.equals("")).map(result => {
@@ -107,7 +107,7 @@ class QueryManager(tableName: String) {
 
       var results = hbase_today.scanByColumnRangeFilter(road + ":" + start, road + ":" + end, Seq("value")) //List(MutableList(...))
 
-      println("QueryManager GetRoadsDataSecond:" + results.filter(!_.equals("")))
+      //println("QueryManager GetRoadsDataSecond:" + results.filter(!_.equals("")))
 
       val timeList = results.filter(!_.equals("")).map(result => {
         if (!"".equals(result))
