@@ -86,7 +86,7 @@ class HBaseReader(val tableName: String) {
       val v = result.getValue(col.getBytes, null);
       if (v == null) ""
       else {
-        println("!", new String(v) + "!" + (Bytes.toString(result.list()(0).getRow).split(" ")(0).split(":")(1) + " " + Bytes.toString(result.list()(0).getRow).split(" ")(1)))
+//        println("!", new String(v) + "!" + (Bytes.toString(result.list()(0).getRow).split(" ")(0).split(":")(1) + " " + Bytes.toString(result.list()(0).getRow).split(" ")(1)))
         //      (!,1,22.280303955078125,0,0.0,1,22.280304,0,0.0,0,0.0,0,0.0,0,0.0!16-09-11 22:05:00)
         //      (!,2,12.259829711914062,1,12.433049,1,12.0,0,0.0,0,0.0,0,0.0,0,0.0!16-09-11 22:10:00)
         new String(v) + "!" + (Bytes.toString(result.list()(0).getRow).split(" ")(0).split(":")(1) + " " + Bytes.toString(result.list()(0).getRow).split(" ")(1))

@@ -28,10 +28,10 @@ class RoadStatCrossFlow(road: String, records: Iterable[RoadInfo]) {
   val other_volume: Double = if(isEmpty) -1 else list.map(_.other_volume).filter(n => !n.isInfinity && !n.isNaN).sum
   val other_speed: Double = if(isEmpty) -1 else list.map(_.other_speed).filter(n => !n.isInfinity && !n.isNaN).sum / size
 
-  if(list.size == zeroList.size){// test by zsr
-    println("list",list.size,"zeroList",zeroList.size)
-    println("bus_volume",bus_volume,"bus_speed",bus_speed)
-  }
+//  if(list.size == zeroList.size){// test by zsr
+//    println("list",list.size,"zeroList",zeroList.size)
+//    println("bus_volume",bus_volume,"bus_speed",bus_speed)
+//  }
 
   def toJson():Json = {
     if(list.isEmpty){

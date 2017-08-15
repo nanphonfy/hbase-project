@@ -68,7 +68,7 @@ class QueryManager(tableName: String) {
 
       var results = hbase_today.QueryTime(road + ":" + start, road + ":" + end, Seq("value", "vehicles")) //List(List(...),...)
       //            var results = hbase_today.scanByColumnRangeFilter(road + ":" + start, road + ":" + end, Seq("value", "vehicles")) //List(MutableList(...))
-      println("QueryManager GetRoadsData:" + results)
+      //      println("QueryManager GetRoadsData:" + results)
 
       val timeList = results.filter(!_.head.equals("")).map(result => {
         result.head.split("!")(1)

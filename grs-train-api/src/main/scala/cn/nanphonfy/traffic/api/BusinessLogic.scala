@@ -21,11 +21,7 @@ class BusinessLogic(tableName: String) {
     //道路统计信息查询
     "roadstat" -> new RoadStatInfoQuery(tableName),
     //公交道路统计排序查询
-    "busroads" -> new BusRoadsSortInfoQuery(tableName),
-    //公交流量总量查询
-    "bustotal" -> new BusRoadsStatInfoQuery(tableName),
-    //道路原始数据查询
-    "roaddata" -> new RoadStatRawTextQuery(tableName)
+    "busroads" -> new BusRoadsSortInfoQuery(tableName)
   )
 
   def Process(): HttpService = HttpService {
