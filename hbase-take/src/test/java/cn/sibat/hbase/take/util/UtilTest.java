@@ -18,19 +18,6 @@ import java.util.List;
  * Created by nanphonfy on 2017/8/12.
  */
 public class UtilTest extends AbstractTest {
-    private long start = 0;
-
-    @Before
-    public void before() {
-        start = System.currentTimeMillis();
-    }
-
-    @After
-    public void after() {
-        logger.info("cost:{} ms", System.currentTimeMillis() - start);
-        logger.info("cost:{} ", StringUtil.getDuration(System.currentTimeMillis() - start));
-    }
-
     /**
      * 测试传入目录，得到该目录的所有文件
      */
@@ -132,5 +119,12 @@ public class UtilTest extends AbstractTest {
                 logger.info("qualifier:{},value:{}", Bytes.toString(keyValue.getQualifier()), Bytes.toString(keyValue.getValue()));
             }
         }
+    }
+
+    @Test
+    public void test0() {
+        String str = "0000987741:16-11-26 20:10:00";
+        logger.info(str.substring(0, 10));
+        logger.info(str.substring(11));
     }
 }

@@ -1,9 +1,17 @@
 package cn.sibat.hbase.take.util;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.sf.json.JSONArray;
 import org.apache.hadoop.hbase.filter.CompareFilter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by nanphonfy on 2017/8/3.
@@ -135,6 +143,21 @@ public class StringUtil {
         return "";
     }
 
+    public static String subOndDay(String dateTime) throws ParseException {
+        Date beginDate = parseStringToDate(dateTime);
+        Calendar date = Calendar.getInstance();
+        date.setTime(beginDate);
+        date.set(Calendar.DATE, date.get(Calendar.DATE) - 1);
+        return df.format(date.getTime());
+    }
+
+    public static Date parseStringToDate(String date) throws ParseException {
+        if (date == null) {
+            return null;
+        }
+        return df.parse(date);
+    }
+
     public static void main(String[] args) throws ParseException {
         System.out.println(CompareFilter.CompareOp.LESS);
         System.out.println("92233705370659".length());
@@ -168,4 +191,5 @@ public class StringUtil {
 //        System.out.println("0001097960:1".length());
         System.out.println(getDay(10));
     }
+
 }

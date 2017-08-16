@@ -50,6 +50,40 @@ public class NewDesignData {
 
         logger.info("fileNames:{}", fileNames);
 
+        for (String fileName : fileNames) {
+            try {
+                hbaseTaking(tableName, directory, fileName);
+            } catch (IOException e) {
+                logger.error("---------->hbase inserting error!--------->{}", e.getMessage());
+            }
+        }
+
+    }
+
+    public static void mainBak(String[] args) throws IOException, ParseException {
+        final String tableName = args[0];
+        final String directory = args[1];//"/home/public/zhengshaorong/backup/"
+
+        logger.info("tableName:{} directory:{}", tableName, directory);
+
+        if (!HBaseDAO.tableExists(tableName)) {
+            logger.info("------------->创建表:{}", tableName);
+        }
+
+        FilesUtil filesUtil = new FilesUtil();
+        List<String> filesPath = filesUtil.getFiles(directory);
+        List<String> fileNames = new ArrayList<>();
+        for (String filePath : filesPath) {
+            try {
+                String[] arr = filePath.split("/");
+                fileNames.add(arr[arr.length - 1]);
+            } catch (Exception e) {
+                logger.error("--------------->get filePath error...{}", e.getMessage());
+            }
+        }
+
+        logger.info("fileNames:{}", fileNames);
+
         // 使用线程池多线程处理，优化
         ThreadPoolExecutor threadPool = new ThreadPoolExecutor(2, 3, 500, TimeUnit.SECONDS,
                 new ArrayBlockingQueue<Runnable>(10),

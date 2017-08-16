@@ -4,10 +4,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.*;
-import org.apache.hadoop.hbase.ipc.RpcClient;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
 
 /**
  * Created by nanphonfy on 2017/8/12.
@@ -110,14 +110,16 @@ public class HBaseDAO {
      * @return
      */
     public static boolean insertSecond(String tableName, List<String> values) {
-        //        Connection connection = null;
-        HTable table = null;
         try {
-            table = new HTable(config, Bytes.toBytes(tableName));
-            //            connection = ConnectionFactory.createConnection(config);
-            //            table = (HTable) connection.getTable(TableName.valueOf(tableName));
-            table.setAutoFlushTo(false);
-            table.setWriteBufferSize(534534534);//设置得太大，可缩小
+            tableExists(tableName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        HTableInterface htable = null;
+        try {
+            htable = conn.getTable(tableName);
+            htable.setAutoFlushTo(false);
+            htable.setWriteBufferSize(534534534);//设置得太大，可缩小
             ArrayList<Put> puts = new ArrayList<>();
             for (String row : values) {
                 try {
@@ -132,21 +134,15 @@ public class HBaseDAO {
                 }
             }
             //插入数据
-            table.put(puts);
+            htable.put(puts);
             //提交
-            table.flushCommits();
+            htable.flushCommits();
             return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         } finally {
-            if (table != null) {
-                try {
-                    table.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            hTableClose(htable);
         }
     }
 
@@ -164,14 +160,11 @@ public class HBaseDAO {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //        Connection connection = null;
-        HTable table = null;
+        HTableInterface htable = null;
         try {
-            table = new HTable(config, Bytes.toBytes(tableName));
-            //            connection = ConnectionFactory.createConnection(config);
-            //            table = (HTable) connection.getTable(TableName.valueOf(tableName));
-            table.setAutoFlushTo(false);
-            table.setWriteBufferSize(534534534);//设置得太大，可缩小
+            htable = conn.getTable(tableName);
+            htable.setAutoFlushTo(false);
+            htable.setWriteBufferSize(534534534);//设置得太大，可缩小
             ArrayList<Put> puts = new ArrayList<>();
             for (String row : values) {
                 try {
@@ -196,21 +189,15 @@ public class HBaseDAO {
                 }
             }
             //插入数据
-            table.put(puts);
+            htable.put(puts);
             //提交
-            table.flushCommits();
+            htable.flushCommits();
             return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         } finally {
-            if (table != null) {
-                try {
-                    table.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            hTableClose(htable);
         }
     }
 
@@ -279,13 +266,10 @@ public class HBaseDAO {
      * @return
      */
     public static boolean insertWhile(String tableName, List<String> values, String date) {
-        //        Connection connection = null;
         HTable table = null;
         try {
             tableExists(tableName);
             table = new HTable(config, Bytes.toBytes(tableName));
-            //            connection = ConnectionFactory.createConnection(config);
-            //            table = (HTable) connection.getTable(TableName.valueOf(tableName));
             table.setAutoFlushTo(false);
             table.setWriteBufferSize(534534534);
             ArrayList<Put> puts = new ArrayList<>();
@@ -455,14 +439,35 @@ public class HBaseDAO {
      * @return
      * @throws Exception
      */
-    public static ResultScanner scanByColumnRangeFilter(String tableName, String startRow, String endRow, String minColumn, String maxColumn) {
+    public static ResultScanner scanByColumnRangeFilter(String tableName, String startRowOld, String stopRowOld, String minColumn, String maxColumn) throws ParseException {
+        //long最大值减去该值，变为stopRow，故需要将日期减1
+        String time1 = StringUtil.subOndDay(startRowOld.substring(11));
+        String time2 = stopRowOld.substring(11);
+        String roadId = startRowOld.substring(0, 11);
+
+        long start = StringUtil.getTimestamp(time1, StringUtil.PATTERN_yy_MM_dd);
+        long end = StringUtil.getTimestamp(time2, StringUtil.PATTERN_yy_MM_dd);
+
+        //时间片的范围
+        String h_m_s1 = startRowOld.substring(20);
+        int timeslice1 = StringUtil.getTimesLice(h_m_s1);
+        minColumn = StringUtil.getQualifier(timeslice1);
+
+        String h_m_s2 = stopRowOld.substring(20);
+        int timeslice2 = StringUtil.getTimesLice(h_m_s2);
+        maxColumn = StringUtil.getQualifier(timeslice2);
+
+        //key的范围
+        String startRow  = roadId + StringUtil.getLongMaxSubTimestamp(end);
+        String stopRow = roadId + StringUtil.getLongMaxSubTimestamp(start);
+
         HTableInterface htable = null;
         ResultScanner rs = null;
         try {
             htable = conn.getTable(tableName);
             Scan scan = new Scan();
             scan.setStartRow(startRow.getBytes());
-            scan.setStopRow(endRow.getBytes());
+            scan.setStopRow(stopRow.getBytes());
 
             boolean minColumnlnclusive = true;
             boolean maxColumnlnclusive = true;
@@ -471,6 +476,7 @@ public class HBaseDAO {
             scan.setFilter(filter);
 
             rs = htable.getScanner(scan);
+
         } catch (IOException e) {
             logger.error("scanByColumnRangeFilter error...\n{}", e.getMessage());
         } finally {
