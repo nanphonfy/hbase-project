@@ -1,4 +1,5 @@
 # hbase-tool
+录入新设计的rowkey，也即高表改宽表。
 直接使用maven的package，然后写shell脚本运行。
 ## XiongWenHBaseWork类  
  设计了新的rowkey和列名  
