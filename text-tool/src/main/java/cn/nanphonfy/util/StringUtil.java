@@ -3,6 +3,9 @@ package cn.nanphonfy.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class StringUtil {
     private static final Logger logger = LoggerFactory.getLogger(StringUtil.class);
 
@@ -79,5 +82,67 @@ public class StringUtil {
      */
     public static boolean isEmpty(String str) {
         return str == null || str.length() == 0;
+    }
+
+    /**
+     * 判断一个字符串是否空
+     */
+    public static String filledZeroStr(int i) {
+        String str = "";
+        if (i < 10) {
+            str += "0" + i;
+        } else {
+            str += i;
+        }
+        return str;
+    }
+
+    /**
+     * 生成序列
+     * @return
+     */
+    public static String getSequenceId(String prefix,int first,int second,int third) {
+        String sequenceId = prefix;
+        // 一级
+        if (first != -1) {
+            sequenceId += filledZeroStr(first);
+        }
+        // 二级
+        if (second != -1) {
+            sequenceId += filledZeroStr(second);
+        }
+        // 三级
+        if (third != -1) {
+            sequenceId += filledZeroStr(third);
+        }
+        return sequenceId;
+    }
+
+    /**
+     * 生成序列
+     * @return
+     */
+    public static String getSequenceId(String prefix,int first,int second) {
+        String sequenceId = prefix;
+        // 一级
+        if (first != -1) {
+            sequenceId += filledZeroStr(first);
+        }
+        // 二级
+        if (second != -1) {
+            sequenceId += filledZeroStr(second);
+        }
+        return sequenceId;
+    }
+
+    /**
+     * 剔除数字
+     * @param value
+     */
+    public static String removeDigital(String value){
+        Pattern p = Pattern.compile("[\\d]");
+        Matcher matcher = p.matcher(value);
+        String result = matcher.replaceAll("");
+        return result;
     }
 }

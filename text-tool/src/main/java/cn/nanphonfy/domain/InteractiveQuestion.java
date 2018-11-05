@@ -1,36 +1,36 @@
 package cn.nanphonfy.domain;
 
 /**
- * 用于存放一级。二级，三级问题
- * @author nanphonfy(南风zsr)
+ * 鐢ㄤ簬瀛樻斁涓�绾с�備簩绾э紝涓夌骇闂
+ * @author nanphonfy(鍗楅zsr)
  * @date 2018/11/4
  */
 public class InteractiveQuestion {
     private String id;
     private String parentId;
-    //    系统分类
+    //    绯荤粺鍒嗙被
     private String classification;
-    //    健康询问事项
+    //    鍋ュ悍璇㈤棶浜嬮」
     private String healthEnquirie;
-    //    三级名称
+    //    涓夌骇鍚嶇О
     private String level3Name;
-    //    ICD10代码
+    //    ICD10浠ｇ爜
     private String ICD10Code;
-    //    通用称谓
+    //    閫氱敤绉拌皳
     private String commonAppellation;
-    //    风险描述
+    //    椋庨櫓鎻忚堪
     private String riskDepiction;
-    //    几级问题
+    //    鍑犵骇闂
     private String nLevelQuestion;
-    //    几级答案
+    //    鍑犵骇绛旀
     private String nLevelAnswer;
-    //    医疗核保
+    //    鍖荤枟鏍镐繚
     private String medicalUnderwriting;
-    //    重疾评点
+    //    閲嶇柧璇勭偣
     private String seriousHealthAdvice;
-    //    寿险评点
+    //    瀵块櫓璇勭偣
     private String lifeInsuranceAdvice;
-    //    补充意见
+    //    琛ュ厖鎰忚
     private String additionalComment;
 
     public InteractiveQuestion(InteractiveQuestionnaire obj) {

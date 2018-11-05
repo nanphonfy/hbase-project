@@ -1,41 +1,41 @@
 package cn.nanphonfy.domain;
 
 /**
- * @author nanphonfy(ÄÏ·çzsr)
+ * @author nanphonfy(å—é£zsr)
  * @date 2018/11/3
  */
 public class InteractiveQuestionnaire {
-    //    ÏµÍ³·ÖÀà
+    //    ç³»ç»Ÿåˆ†ç±»
     private String classification;
-    //    ½¡¿µÑ¯ÎÊÊÂÏî
+    //    å¥åº·è¯¢é—®äº‹é¡¹
     private String healthEnquirie;
-    //    Èı¼¶Ãû³Æ
+    //    ä¸‰çº§åç§°
     private String level3Name;
-    //    ICD10´úÂë
+    //    ICD10ä»£ç 
     private String ICD10Code;
-    //    Í¨ÓÃ³ÆÎ½
+    //    é€šç”¨ç§°è°“
     private String commonAppellation;
-    //    ·çÏÕÃèÊö
+    //    é£é™©æè¿°
     private String riskDepiction;
-    //    Ò»¼¶ÎÊÌâ
+    //    ä¸€çº§é—®é¢˜
     private String firstLevelQuestion;
-    //    Ò»¼¶´ğ°¸
+    //    ä¸€çº§ç­”æ¡ˆ
     private String firstLevelAnswer;
-    //    ¶ş¼¶ÎÊÌâ
+    //    äºŒçº§é—®é¢˜
     private String secondLevelQuestion;
-    //    ¶ş¼¶´ğ°¸
+    //    äºŒçº§ç­”æ¡ˆ
     private String secondLevelAnswer;
-    //    Èı¼¶ÎÊÌâ
+    //    ä¸‰çº§é—®é¢˜
     private String ThirdLevelQuestion;
-    //    Èı¼¶´ğ°¸
+    //    ä¸‰çº§ç­”æ¡ˆ
     private String ThirdLevelAnswer;
-    //    Ò½ÁÆºË±£
+    //    åŒ»ç–—æ ¸ä¿
     private String medicalUnderwriting;
-    //    ÖØ¼²ÆÀµã
+    //    é‡ç–¾è¯„ç‚¹
     private String seriousHealthAdvice;
-    //    ÊÙÏÕÆÀµã
+    //    å¯¿é™©è¯„ç‚¹
     private String lifeInsuranceAdvice;
-    //    ²¹³äÒâ¼û
+    //    è¡¥å……æ„è§
     private String additionalComment;
 
     public String getClassification() {
