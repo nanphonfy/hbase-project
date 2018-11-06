@@ -17,6 +17,8 @@ public class HealthQuestionnaireClassification {
     private String sequence;
     // ICD10代码
     private String ICD10;
+    // 通用称谓
+    private String commonAppellation;
 
     public String getId() {
         return id;
@@ -64,5 +66,13 @@ public class HealthQuestionnaireClassification {
 
     public void setICD10(String ICD10) {
         this.ICD10 = ICD10;
+    }
+
+    public String getCommonAppellation() {
+        return commonAppellation;
+    }
+
+    public void setCommonAppellation(String commonAppellation) {
+        this.commonAppellation = commonAppellation;
     }
 }

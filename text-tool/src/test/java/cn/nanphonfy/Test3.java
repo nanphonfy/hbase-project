@@ -15,7 +15,8 @@ import java.util.List;
  */
 public class Test3 {
     public static void main(String[] args) throws IOException {
-        File newFile = new File("C:\\Users\\NAN\\Desktop\\data\\其他.txt");
+        //File newFile = new File("C:\\Users\\NAN\\Desktop\\data\\其他.txt");
+        File newFile = new File("D:\\code\\text-code\\其他.txt");
         InputStreamReader reader = new InputStreamReader(new FileInputStream(newFile)); // 建立一个输入流对象reader
         BufferedReader br = new BufferedReader(reader); // 建立一个对象，它把文件内容转成计算机能读懂的语言
         String line = "";
