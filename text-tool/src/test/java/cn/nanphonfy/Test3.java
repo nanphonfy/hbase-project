@@ -29,6 +29,7 @@ public class Test3 {
                 obj.setParentId(arr[0]);
                 obj.setId(StringUtil.getSequenceId(arr[0],i,-1));
                 obj.setClassification(StringUtil.removeDigital(arr[i]));
+                obj.setSequence(String.valueOf(i));
 
                 list.add(obj);
             }

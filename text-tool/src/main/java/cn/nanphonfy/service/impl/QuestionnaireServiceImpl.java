@@ -7,11 +7,10 @@ import cn.nanphonfy.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparing;
 
 /**
  * Created by zhengshaorong on 2018/11/5.
@@ -27,10 +26,6 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
      */
     @Override
     public List<HealthQuestionnaireClassification> parseHealthQuestionnaireClassification(List<InteractiveQuestionnaire> questions) {
-        Map<String, String> firstMap = new HashMap<>();
-        Map<String, String> secondMap = new HashMap<>();
-        Map<String, String> thirdMap = new HashMap<>();
-
         List<String> firstList = questions.stream().map(s -> s.getClassification()).distinct()
                 .collect(Collectors.toList());
         List<String> thirdList = questions.stream().map(s -> s.getLevel3Name()).distinct().collect(Collectors.toList());
@@ -39,6 +34,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         List<HealthQuestionnaireClassification> seconndNewList = new ArrayList();
 
         int firstrow = 1;
+        int choiceId = 1017;
         //遍历第一层父节点
         for (String classification : firstList) {
             //空值或null值
@@ -52,13 +48,16 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
                     HealthQuestionnaireClassification classification1 = new HealthQuestionnaireClassification();
                     classification1.setId(StringUtil.getSequenceId(PREFIX, firstrow, i, -1));
                     classification1.setClassification(classification);
+                    classification1.setChoiceId(""+choiceId);
                     firstNewList.add(classification1);
 
                     i++;
                     HealthQuestionnaireClassification classification2 = new HealthQuestionnaireClassification();
                     classification2.setId(StringUtil.getSequenceId(PREFIX, firstrow, i, -1));
                     classification2.setClassification(OTHER);
+                    classification2.setChoiceId(""+choiceId);
                     firstNewList.add(classification2);
+                    choiceId++;
                     break;
                 }
             }
@@ -97,7 +96,10 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
                                     .getSequenceId(firstObj.getId(), classificationCountMap.get(key), -1, -1));
                             classification1.setClassification(level3Name);
                             classification1.setParentId(firstObj.getId());
+                            classification1.setChoiceId(firstObj.getChoiceId());
                             classification1.setCommonAppellation(obj.getCommonAppellation());
+                            //顺序
+                            classification1.setSequence(String.valueOf(classificationCountMap.get(key)));
 
                             String icd10 = obj.getICD10Code();
                             //转换成我们想要的ICD10
@@ -285,7 +287,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     }
 
     @Override
-    public void parseQuestionAndChoiceTableNew(List<InteractiveQuestionnaire> questions,List<HealthQuestionnaireClassification> healthQuestionnaireClassifications) {
+    public void parseQuestionAndChoiceTableNew(List<InteractiveQuestionnaire> questions, List<HealthQuestionnaireClassification> healthQuestionnaireClassifications, List<Question> newQuestionList, List<Choice> newChoiceList) {
         //三类问题的计数器
         Map<String, Question> firstQuestionMap = new HashMap<>();
         Map<String, Question> secondQuestionMap = new HashMap<>();
@@ -313,8 +315,6 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
             }
         }
 
-        List<Question> newQuestionList = new ArrayList<>();
-        List<Choice> newChoiceList = new ArrayList<>();
         int questionId = 1;
         int choiceId = 1;
         for (InteractiveQuestionnaire questionnaire : questions) {
@@ -324,18 +324,19 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
             String levelQuestionStr = questionnaire.getFirstLevelQuestion();
             String parentId=null;
+            String sequence = "1";
             //还未保存的问题
             Question question1 = new Question();
-            boolean flag = judgeFirstQuestionMap(question1, newQuestionList, firstQuestionMap, questionnaire,levelQuestionStr, String.valueOf(questionId), parentId);
+            boolean flag = judgeLevelQuestionMap(question1, newQuestionList, firstQuestionMap, questionnaire,levelQuestionStr, String.valueOf(questionId), parentId,sequence);
             if (flag == true) {
                 questionId++;
             }
 
-            String choiceIdStr = "";
+            String choiceAnswer = questionnaire.getFirstLevelAnswer();
             //questionId+答案，确定唯一性s
             String key = question1.getId() + "_" + questionnaire.getFirstLevelAnswer();
             Choice choice1 = new Choice();
-            flag = judgeFirstChoiceMap(choice1, newChoiceList, firstChoiceMap, questionnaire,key, String.valueOf(choiceId),question1.getId(), null);
+            flag = judgeLevelChoiceMap(choice1, newChoiceList, firstChoiceMap, questionnaire,key, String.valueOf(choiceId),choiceAnswer,question1.getId(), null);
             if (flag == true) {
                 choiceId++;
             }
@@ -345,17 +346,19 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
             }
             levelQuestionStr = questionnaire.getSecondLevelQuestion();
             parentId=question1.getId();
+            sequence = "2";
             //还未保存的问题
             Question question2 = new Question();
-            flag = judgeFirstQuestionMap(question2, newQuestionList, secondQuestionMap, questionnaire,levelQuestionStr, String.valueOf(questionId), parentId);
+            flag = judgeLevelQuestionMap(question2, newQuestionList, secondQuestionMap, questionnaire,levelQuestionStr, String.valueOf(questionId), parentId, sequence);
             if (flag == true) {
                 questionId++;
             }
 
+            choiceAnswer = questionnaire.getSecondLevelAnswer();
             //questionId+答案，确定唯一性s
             key = question2.getId() + "_" + questionnaire.getSecondLevelAnswer();
             Choice choice2 = new Choice();
-            flag = judgeFirstChoiceMap(choice2, newChoiceList, secondChoiceMap, questionnaire,key, String.valueOf(choiceId),question2.getId(), choice1.getId());
+            flag = judgeLevelChoiceMap(choice2, newChoiceList, secondChoiceMap, questionnaire,key, String.valueOf(choiceId),choiceAnswer,question2.getId(), choice1.getId());
             if (flag == true) {
                 choiceId++;
             }
@@ -365,24 +368,146 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
             }
             levelQuestionStr = questionnaire.getThirdLevelQuestion();
             parentId=question2.getId();
+            sequence = "3";
             //还未保存的问题
             Question question3 = new Question();
-            flag = judgeFirstQuestionMap(question3, newQuestionList, thirdQuestionMap, questionnaire,levelQuestionStr, String.valueOf(questionId), parentId);
+            flag = judgeLevelQuestionMap(question3, newQuestionList, thirdQuestionMap, questionnaire,levelQuestionStr, String.valueOf(questionId), parentId, sequence);
             if (flag == true) {
                 questionId++;
             }
 
+            choiceAnswer = questionnaire.getThirdLevelAnswer();
             //questionId+答案，确定唯一性s
             key = question3.getId() + "_" + questionnaire.getThirdLevelAnswer();
             Choice choice3 = new Choice();
-            flag = judgeFirstChoiceMap(choice3, newChoiceList, secondChoiceMap, questionnaire,key, String.valueOf(choiceId),question3.getId(), choice2.getId());
+            flag = judgeLevelChoiceMap(choice3, newChoiceList, thirdChoiceMap, questionnaire,key, String.valueOf(choiceId),choiceAnswer,question3.getId(), choice2.getId());
             if (flag == true) {
                 choiceId++;
             }
         }
-        //        System.out.println(FastJsonUtil.toJson(questions));
-        System.out.println(FastJsonUtil.toJson(newQuestionList));
-        System.out.println(FastJsonUtil.toJson(newChoiceList));
+    }
+
+    @Override
+    public void parseMedicalInsuranceRuleTable(List<InteractiveQuestionnaire> questionnaires, List<Question> newQuestionList, List<Choice> newChoiceList, List<MedicalInsuranceRule> newMedicalInsuranceRuleList, List<HealthQuestionnaireClassification> healthQuestionnaireClassifications) {
+        //健康问卷分类表Map
+        Map<String,String> classificationMap = new HashMap<>();
+        //问题表Map
+        Map<String,String> questionMap = new HashMap<>();
+        //选项表Map
+        Map<String,String> choiceMap = new HashMap<>();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // 健康问卷分类表
+        for (HealthQuestionnaireClassification classification : healthQuestionnaireClassifications) {
+            classificationMap.put(classification.getClassification(), classification.getId());
+        }
+        // 问题表
+        for (Question question : newQuestionList) {
+            questionMap.put(question.getContent(), question.getId());
+        }
+        // 选项表
+        for (Choice choice : newChoiceList) {
+            String key = choice.getQuestionId() + "_" + choice.getContent();
+            choiceMap.put(key, choice.getId());
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //替换Excel表格为id格式
+        for (InteractiveQuestionnaire questionnaire : questionnaires) {
+            try {
+                questionnaire.setLevel3Name(classificationMap.get(questionnaire.getLevel3Name()));
+
+                questionnaire.setFirstLevelQuestion(questionMap.get(questionnaire.getFirstLevelQuestion()));
+                String firstKey = questionnaire.getFirstLevelQuestion() + "_" + questionnaire.getFirstLevelAnswer();
+                questionnaire.setFirstLevelAnswer(choiceMap.get(firstKey));
+
+                questionnaire.setSecondLevelQuestion(questionMap.get(questionnaire.getSecondLevelQuestion()));
+                String secondKey = questionnaire.getSecondLevelQuestion() + "_" + questionnaire.getSecondLevelAnswer();
+                questionnaire.setSecondLevelAnswer(choiceMap.get(secondKey));
+
+                questionnaire.setThirdLevelQuestion(questionMap.get(questionnaire.getThirdLevelQuestion()));
+                String thirdKey = questionnaire.getThirdLevelQuestion() + "_" + questionnaire.getThirdLevelAnswer();
+                questionnaire.setFirstLevelAnswer(choiceMap.get(thirdKey));
+
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //生成【医疗核保结果表】
+        int id = 1;
+        for (InteractiveQuestionnaire questionnaire : questionnaires) {
+            try {
+                MedicalInsuranceRule rule = new MedicalInsuranceRule();
+                rule.setId(id);
+                rule.setClassificationId(questionnaire.getLevel3Name());
+
+                rule.setQuestionId1(questionnaire.getFirstLevelQuestion());
+                rule.setQuestionId2(questionnaire.getSecondLevelQuestion());
+                rule.setQuestionId3(questionnaire.getThirdLevelQuestion());
+                rule.setChoiceId1(questionnaire.getFirstLevelAnswer());
+                rule.setChoiceId2(questionnaire.getSecondLevelAnswer());
+                rule.setChoiceId3(questionnaire.getThirdLevelAnswer());
+
+                int count=0;
+                if(!StringUtil.isEmpty(rule.getQuestionId1())){
+                    count++;
+                }
+                if(!StringUtil.isEmpty(rule.getQuestionId2())){
+                    count++;
+                }
+                if(!StringUtil.isEmpty(rule.getQuestionId3())){
+                    count++;
+                }
+                rule.setLevelCount(count);
+
+                rule.setRiskDepiction(questionnaire.getRiskDepiction());
+                rule.setMedicalUnderwriting(questionnaire.getMedicalUnderwriting());
+                rule.setSeriousHealthAdvice(questionnaire.getSeriousHealthAdvice());
+                rule.setLifeInsuranceAdvice(questionnaire.getLifeInsuranceAdvice());
+                rule.setAdditionalComment(questionnaire.getAdditionalComment());
+
+                //设置code
+                String resultCode = "-1";
+                if(rule.getMedicalUnderwriting().contains("通过")){
+                    resultCode = "0";
+                }else if(rule.getMedicalUnderwriting().contains("人工核保")){
+                    resultCode = "1";
+                }else if(rule.getMedicalUnderwriting().contains("除外")){
+                    resultCode = "2";
+                }
+                rule.setResultCode(resultCode);
+
+                newMedicalInsuranceRuleList.add(rule);
+                id++;
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+            }
+        }
+
+        logger.info(FastJsonUtil.toJson(newMedicalInsuranceRuleList));
+    }
+
+    @Override
+    public void addQuestionOther(List<Question> newQuestionList, List<HealthQuestionnaireClassification> healthQuestionnaireClassifications) {
+        //取id最大值
+        String maxQuestionId = newQuestionList.stream().max(comparing(s->StringUtil.getInt(s.getId(),-1))).orElse(null).getId();;
+        List<HealthQuestionnaireClassification> otherClassifications = healthQuestionnaireClassifications.stream().filter(s->"其他".equals(s.getClassification())).collect(Collectors.toList());
+
+        int id = StringUtil.getInt(maxQuestionId,-1)+1;
+        for(HealthQuestionnaireClassification classification:otherClassifications){
+            Question q = new Question();
+            q.setId(String.valueOf(id));
+            q.setContent("其他");
+            q.setClassificationId(classification.getId());
+            //问题类型(普通|特殊)
+            //q.setType("");
+            newQuestionList.add(q);
+            id++;
+        }
     }
 
     /**
@@ -397,13 +522,13 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
      * @param parentId
      * @return
      */
-    private boolean judgeFirstChoiceMap(Choice choice, List<Choice> newChoiceList, Map<String, Choice> levelChoiceMap,
-            InteractiveQuestionnaire questionnaire, String key, String choiceId, String questionId, String parentId) {
+    private boolean judgeLevelChoiceMap(Choice choice, List<Choice> newChoiceList, Map<String, Choice> levelChoiceMap,InteractiveQuestionnaire questionnaire, String key, String choiceId,String choiceAnswer, String questionId, String parentId) {
         boolean flag = false;
         if (levelChoiceMap.get(key) == null) {
             choice.setId(choiceId);
             choice.setQuestionId(questionId);
-            choice.setContent(questionnaire.getFirstLevelAnswer());
+            //bug出现的地方
+            choice.setContent(choiceAnswer);
             choice.setParentId(parentId);
             choice.setIsValid("Y");
             newChoiceList.add(choice);
@@ -411,7 +536,13 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
             levelChoiceMap.put(key,choice);
             flag = true;
         }else {
-            choice = levelChoiceMap.get(key);
+            Choice temp = levelChoiceMap.get(key);
+            //选项ID 问题ID 选项类型 选项内容 选项顺序 选项类别 是否必填 是否显示下层选项 父节点ID 提示术语 是否有效 版本号
+            choice.setId(temp.getId());
+            choice.setQuestionId(temp.getQuestionId());
+            choice.setContent(temp.getContent());
+            choice.setParentId(temp.getParentId());
+            choice.setIsValid(temp.getIsValid());
             flag = false;
         }
         return flag;
@@ -426,24 +557,34 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
      * @param levelQuestionStr
      * @param questionId
      * @param parentId
+     * @param sequence
      * @return
      */
-    private boolean judgeFirstQuestionMap(Question question, List<Question> newQuestionList,
-            Map<String, Question> levelQuestionMap, InteractiveQuestionnaire questionnaire, String levelQuestionStr,
-            String questionId, String parentId) {
+    private boolean judgeLevelQuestionMap(Question question, List<Question> newQuestionList,
+                                          Map<String, Question> levelQuestionMap, InteractiveQuestionnaire questionnaire, String levelQuestionStr,
+                                          String questionId, String parentId, String sequence) {
         boolean flag = false;
         if (levelQuestionMap.get(levelQuestionStr) == null) {
             question.setId(questionId);
             question.setContent(levelQuestionStr);
             question.setParentId(parentId);
             question.setClassificationId(questionnaire.getLevel3Name());
+            // 问题类型(普通|特殊)
+            // question.setType("");
 
             newQuestionList.add(question);
             //第n层，需要放入map
             levelQuestionMap.put(levelQuestionStr, question);
             flag = true;
         } else {
-            question = levelQuestionMap.get(levelQuestionStr);
+            Question temp = levelQuestionMap.get(levelQuestionStr);
+            question.setId(temp.getId());
+            question.setClassificationId(temp.getClassificationId());
+            question.setParentId(temp.getParentId());
+            question.setContent(temp.getContent());
+            question.setSequence(temp.getSequence());
+            question.setType(temp.getType());
+            question.setVersion(temp.getVersion());
             flag = false;
         }
         return flag;

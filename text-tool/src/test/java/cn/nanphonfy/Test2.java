@@ -1,6 +1,7 @@
 package cn.nanphonfy;
 
 /**
+ * 特殊符号替换
  * @author nanphonfy(南风zsr)
  * @date 2018/11/5
  */

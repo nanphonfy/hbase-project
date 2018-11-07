@@ -1,5 +1,6 @@
 package cn.nanphonfy.service.impl;
 
+import cn.nanphonfy.domain.HealthQuestionnaireClassification;
 import cn.nanphonfy.domain.InteractiveQuestion;
 import cn.nanphonfy.domain.InteractiveQuestionnaire;
 import cn.nanphonfy.service.DealWithService;
@@ -7,6 +8,10 @@ import cn.nanphonfy.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,6 +95,33 @@ public class DealWithServiceImpl implements DealWithService {
                 i++;
                 questions.add(q3);
             }
+        }
+    }
+
+    @Override
+    public void dealTxtForHealthQuestionnaireClassification(List<HealthQuestionnaireClassification> healthQuestionnaireClassifications,String filePath) {
+        File newFile = null;
+        try {
+            newFile = new File(filePath);
+            InputStreamReader reader = new InputStreamReader(new FileInputStream(newFile)); // 建立一个输入流对象reader
+            BufferedReader br = new BufferedReader(reader); // 建立一个对象，它把文件内容转成计算机能读懂的语言
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+                String[] arr = line.split("、");
+                for(int i=1;i<arr.length;i++){
+                    HealthQuestionnaireClassification  obj= new HealthQuestionnaireClassification();
+                    obj.setParentId(arr[0]);
+                    obj.setId(StringUtil.getSequenceId(arr[0],i,-1));
+                    obj.setClassification(StringUtil.removeDigital(arr[i]));
+                    //顺序
+                    obj.setSequence(String.valueOf(i));
+
+                    healthQuestionnaireClassifications.add(obj);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

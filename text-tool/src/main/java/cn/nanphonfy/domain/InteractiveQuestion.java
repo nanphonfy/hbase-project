@@ -1,7 +1,7 @@
 package cn.nanphonfy.domain;
 
 /**
- * 用于存放一级。二级，三级问题
+ * 用于存放一级，二级，三级问题
  * @author nanphonfy(南风zsr)
  * @date 2018/11/4
  */

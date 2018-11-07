@@ -1,7 +1,7 @@
 package cn.nanphonfy.domain;
 
 /**
- * 健康问卷分类
+ * 【健康问卷分类表】
  * Created by zhengshaorong on 2018/11/5.
  */
 public class HealthQuestionnaireClassification {

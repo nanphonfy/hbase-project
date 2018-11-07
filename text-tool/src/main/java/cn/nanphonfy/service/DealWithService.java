@@ -1,5 +1,6 @@
 package cn.nanphonfy.service;
 
+import cn.nanphonfy.domain.HealthQuestionnaireClassification;
 import cn.nanphonfy.domain.InteractiveQuestion;
 import cn.nanphonfy.domain.InteractiveQuestionnaire;
 
@@ -23,6 +24,11 @@ public interface DealWithService {
      * @param questions
      * @param classficationMap
      */
-    void getQuestionByClassficationMap(List<InteractiveQuestion> questions,
-                                       Map<String, List<InteractiveQuestionnaire>> classficationMap);
+    void getQuestionByClassficationMap(List<InteractiveQuestion> questions,Map<String, List<InteractiveQuestionnaire>> classficationMap);
+
+    /**
+     * 处理非交互式病种（读取TXT）
+     * @param healthQuestionnaireClassifications
+     */
+    void dealTxtForHealthQuestionnaireClassification(List<HealthQuestionnaireClassification> healthQuestionnaireClassifications,String filePath);
 }

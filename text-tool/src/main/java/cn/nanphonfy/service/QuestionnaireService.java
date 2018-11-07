@@ -1,7 +1,6 @@
 package cn.nanphonfy.service;
 
-import cn.nanphonfy.domain.HealthQuestionnaireClassification;
-import cn.nanphonfy.domain.InteractiveQuestionnaire;
+import cn.nanphonfy.domain.*;
 
 import java.util.List;
 
@@ -27,6 +26,25 @@ public interface QuestionnaireService {
      * 整合版
      * @param questions
      * @param healthQuestionnaireClassifications
+     * @param newQuestionList
+     * @param newChoiceList
      */
-    void parseQuestionAndChoiceTableNew(List<InteractiveQuestionnaire> questions,List<HealthQuestionnaireClassification> healthQuestionnaireClassifications);
+    void parseQuestionAndChoiceTableNew(List<InteractiveQuestionnaire> questions, List<HealthQuestionnaireClassification> healthQuestionnaireClassifications, List<Question> newQuestionList, List<Choice> newChoiceList);
+
+    /**
+     * 转换成【医疗核保结果表】
+     * @param questionnaires
+     * @param newQuestionList
+     * @param newChoiceList
+     * @param newMedicalInsuranceRuleList
+     * @param classficationMap
+     */
+    void parseMedicalInsuranceRuleTable(List<InteractiveQuestionnaire> questionnaires, List<Question> newQuestionList, List<Choice> newChoiceList, List<MedicalInsuranceRule> newMedicalInsuranceRuleList, List<HealthQuestionnaireClassification> classficationMap);
+
+    /**
+     * 增加病种为"其他"的 虚拟问题
+     * @param newQuestionList
+     * @param healthQuestionnaireClassifications
+     */
+    void addQuestionOther(List<Question> newQuestionList, List<HealthQuestionnaireClassification> healthQuestionnaireClassifications);
 }
