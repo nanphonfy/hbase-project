@@ -118,7 +118,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         healthQuestionnaireClassifications.addAll(firstNewList);
         healthQuestionnaireClassifications.addAll(seconndNewList);
 
-        logger.info(FastJsonUtil.toJson(healthQuestionnaireClassifications));
+        //logger.info(FastJsonUtil.toJson(healthQuestionnaireClassifications));
         return healthQuestionnaireClassifications;
     }
 
@@ -488,7 +488,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
             }
         }
 
-        logger.info(FastJsonUtil.toJson(newMedicalInsuranceRuleList));
+        //logger.info(FastJsonUtil.toJson(newMedicalInsuranceRuleList));
     }
 
     @Override

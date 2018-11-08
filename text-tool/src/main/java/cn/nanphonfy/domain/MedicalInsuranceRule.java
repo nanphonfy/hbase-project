@@ -11,12 +11,16 @@ public class MedicalInsuranceRule {
     private Integer levelCount;
     private String questionId1;
     private String choiceId1;
+    private String answer1;
     private String questionId2;
     private String choiceId2;
+    private String answer2;
     private String questionId3;
     private String choiceId3;
+    private String answer3;
     private String questionId4;
     private String choiceId4;
+    private String answer4;
     //    结果code
     private String resultCode;
     //    风险描述
@@ -29,6 +33,38 @@ public class MedicalInsuranceRule {
     private String lifeInsuranceAdvice;
     //    补充意见
     private String additionalComment;
+
+    public String getAnswer4() {
+        return answer4;
+    }
+
+    public void setAnswer4(String answer4) {
+        this.answer4 = answer4;
+    }
+
+    public String getAnswer1() {
+        return answer1;
+    }
+
+    public void setAnswer1(String answer1) {
+        this.answer1 = answer1;
+    }
+
+    public String getAnswer2() {
+        return answer2;
+    }
+
+    public void setAnswer2(String answer2) {
+        this.answer2 = answer2;
+    }
+
+    public String getAnswer3() {
+        return answer3;
+    }
+
+    public void setAnswer3(String answer3) {
+        this.answer3 = answer3;
+    }
 
     public String getResultCode() {
         return resultCode;

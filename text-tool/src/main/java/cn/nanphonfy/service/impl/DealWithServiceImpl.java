@@ -51,6 +51,24 @@ public class DealWithServiceImpl implements DealWithService {
         return map;
     }
 
+    @Override
+    public Map<String, HealthQuestionnaireClassification> getHealthQuestionnaireClassificationMap(
+            List<HealthQuestionnaireClassification> list) {
+        //按系统分类
+        Map<String, HealthQuestionnaireClassification> map = new HashMap<>();
+        for (HealthQuestionnaireClassification obj : list) {
+            //系统分类
+            String key = obj.getId();
+            if (StringUtil.isEmpty(key)) {
+                continue;
+            }
+            if (!map.containsKey(key)) {
+                map.put(key, obj);
+            }
+        }
+        return map;
+    }
+
     /**
      * 把一条记录分成多行，父子节点
      *
@@ -100,6 +118,9 @@ public class DealWithServiceImpl implements DealWithService {
 
     @Override
     public void dealTxtForHealthQuestionnaireClassification(List<HealthQuestionnaireClassification> healthQuestionnaireClassifications,String filePath) {
+        DealWithService dealWithService = new DealWithServiceImpl();
+        //得到已有病种的id->obj
+        Map<String, HealthQuestionnaireClassification> map =dealWithService.getHealthQuestionnaireClassificationMap(healthQuestionnaireClassifications);
         File newFile = null;
         try {
             newFile = new File(filePath);
@@ -111,9 +132,10 @@ public class DealWithServiceImpl implements DealWithService {
                 String[] arr = line.split("、");
                 for(int i=1;i<arr.length;i++){
                     HealthQuestionnaireClassification  obj= new HealthQuestionnaireClassification();
-                    obj.setParentId(arr[0]);
-                    obj.setId(StringUtil.getSequenceId(arr[0],i,-1));
+                    obj.setParentId("1"+arr[0]);
+                    obj.setId(StringUtil.getSequenceId(obj.getParentId(),i,-1));
                     obj.setClassification(StringUtil.removeDigital(arr[i]));
+                    obj.setChoiceId(map.get(obj.getParentId()).getChoiceId());
                     //顺序
                     obj.setSequence(String.valueOf(i));
 

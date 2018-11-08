@@ -20,6 +20,14 @@ public interface DealWithService {
     Map<String, List<InteractiveQuestionnaire>> getClassficationMap(List<InteractiveQuestionnaire> list);
 
     /**
+     * 根据系统分类，划分ID->obj
+     * @param list
+     * @return
+     */
+    Map<String, HealthQuestionnaireClassification> getHealthQuestionnaireClassificationMap(
+            List<HealthQuestionnaireClassification> list);
+
+    /**
      * 把一条记录分成多行，父子节点
      * @param questions
      * @param classficationMap
