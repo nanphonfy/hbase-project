@@ -58,7 +58,10 @@ public class DealWithServiceImpl implements DealWithService {
         Map<String, HealthQuestionnaireClassification> map = new HashMap<>();
         for (HealthQuestionnaireClassification obj : list) {
             //系统分类
-            String key = obj.getId();
+            String key = obj.getId().trim();
+            if("0010102".equals(key)){
+                System.out.println("--------------------------");
+            }
             if (StringUtil.isEmpty(key)) {
                 continue;
             }
@@ -121,6 +124,7 @@ public class DealWithServiceImpl implements DealWithService {
         DealWithService dealWithService = new DealWithServiceImpl();
         //得到已有病种的id->obj
         Map<String, HealthQuestionnaireClassification> map =dealWithService.getHealthQuestionnaireClassificationMap(healthQuestionnaireClassifications);
+        System.out.println(map.get("0010102"));
         File newFile = null;
         try {
             newFile = new File(filePath);
@@ -131,19 +135,29 @@ public class DealWithServiceImpl implements DealWithService {
                 System.out.println(line);
                 String[] arr = line.split("、");
                 for(int i=1;i<arr.length;i++){
-                    HealthQuestionnaireClassification  obj= new HealthQuestionnaireClassification();
-                    obj.setParentId("1"+arr[0]);
-                    obj.setId(StringUtil.getSequenceId(obj.getParentId(),i,-1));
-                    obj.setClassification(StringUtil.removeDigital(arr[i]));
-                    obj.setChoiceId(map.get(obj.getParentId()).getChoiceId());
-                    //顺序
-                    obj.setSequence(String.valueOf(i));
+                    try {
+                        HealthQuestionnaireClassification  obj= new HealthQuestionnaireClassification();
+                        obj.setParentId(("0"+arr[0]));
+                        obj.setId(StringUtil.getSequenceId(obj.getParentId(),i,-1));
+                        obj.setClassification(StringUtil.removeDigital(arr[i]));
+                        //解决0010102无法解析的问题
+                        /*if(map.get(obj.getParentId()) == null){
+                            HealthQuestionnaireClassification temp = map.get("0010102");
+                            obj.setChoiceId(temp.getChoiceId());
+                        }else {
+                        }*/
+                        obj.setChoiceId(map.get(obj.getParentId()).getChoiceId());
+                        //顺序
+                        obj.setSequence(String.valueOf(i));
 
-                    healthQuestionnaireClassifications.add(obj);
+                        healthQuestionnaireClassifications.add(obj);
+                    } catch (Exception e) {
+                        logger.error(e.getMessage());
+                    }
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 }

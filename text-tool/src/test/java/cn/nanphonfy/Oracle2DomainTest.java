@@ -13,8 +13,8 @@ public class Oracle2DomainTest {
         try { // 防止文件建立或读取失败，用catch捕捉错误并打印，也可以throw
             String A="1.txt";
             String B="1-xml.txt";
-//            String BASE="D:\\Users\\zhengsr001\\Desktop\\";
-            String BASE="C:\\Users\\NAN\\Desktop\\data\\";
+            String BASE="D:\\Users\\zhengsr001\\Desktop\\";
+//            String BASE="C:\\Users\\NAN\\Desktop\\data\\";
             /* 读入TXT文件 */
             String pathname = BASE+A; // 绝对路径或相对路径都可以，这里是绝对路径，写入文件时演示相对路径
             File filename = new File(pathname); // 要读取以上路径的input。txt文件

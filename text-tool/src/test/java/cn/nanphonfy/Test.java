@@ -26,16 +26,16 @@ public class Test {
     private static final String PREFIX = "00";
     private static final String OTHER = "其他";
     private static final String TXT_FILE_PATH = "D:\\code\\text-code\\其他.txt";
-    private static final String EXCEL_FILE_PATH = "C:\\Users\\NAN\\Desktop\\data\\重新整理-问卷-v1.0.1.xlsx";
+   /* private static final String EXCEL_FILE_PATH = "C:\\Users\\NAN\\Desktop\\data\\重新整理-问卷-v1.0.1.xlsx";
     private static final String SQL_FILE_PATH_1 = "C:\\Users\\NAN\\Desktop\\data\\uw_questionaire_cat.sql";
     private static final String SQL_FILE_PATH_2 = "C:\\Users\\NAN\\Desktop\\data\\uw_health_questions.sql";
     private static final String SQL_FILE_PATH_3 = "C:\\Users\\NAN\\Desktop\\data\\uw_health_options.sql";
-    private static final String SQL_FILE_PATH_4 = "C:\\Users\\NAN\\Desktop\\data\\uw_medical_uw_rules.sql";
-//    private static final String EXCEL_FILE_PATH = "D:\\code\\text-code\\重新整理-问卷-v1.0.1.xlsx";
-//    private static final String SQL_FILE_PATH_1 = "D:\\code\\text-code\\uw_questionaire_cat.sql";
-//    private static final String SQL_FILE_PATH_2 = "D:\\code\\text-code\\uw_health_questions.sql";
-//    private static final String SQL_FILE_PATH_3 = "D:\\code\\text-code\\uw_questionaire_cat3.sql";
-//    private static final String SQL_FILE_PATH_4 = "D:\\code\\text-code\\uw_questionaire_cat4.sql";
+    private static final String SQL_FILE_PATH_4 = "C:\\Users\\NAN\\Desktop\\data\\uw_medical_uw_rules.sql";*/
+    private static final String EXCEL_FILE_PATH = "D:\\code\\text-code\\重新整理-问卷-v1.0.1.xlsx";
+    private static final String SQL_FILE_PATH_1 = "D:\\code\\text-code\\uw_questionaire_cat.sql";
+    private static final String SQL_FILE_PATH_2 = "D:\\code\\text-code\\uw_health_questions.sql";
+    private static final String SQL_FILE_PATH_3 = "D:\\code\\text-code\\uw_health_options.sql";
+    private static final String SQL_FILE_PATH_4 = "D:\\code\\text-code\\uw_medical_uw_rules.sql";
 
     public static void main(String[] args) {
         QuestionnaireService questionnaireService = new QuestionnaireServiceImpl();
@@ -70,7 +70,7 @@ public class Test {
         questionnaireService.parseMedicalInsuranceRuleTable(questionnaires,newQuestionList,newChoiceList,newMedicalInsuranceRuleList,healthQuestionnaireClassifications);
 
         // add【健康问卷分类表】非交互式病种
-        //dealWithService.dealTxtForHealthQuestionnaireClassification(healthQuestionnaireClassifications,TXT_FILE_PATH);
+        dealWithService.dealTxtForHealthQuestionnaireClassification(healthQuestionnaireClassifications,TXT_FILE_PATH);
 
         System.out.println(String.format("问卷分类表:%s,问题表:%s,选项表:%s,核保规则表:%s",healthQuestionnaireClassifications.size(),newQuestionList.size(),newChoiceList.size(),newMedicalInsuranceRuleList.size()));
 

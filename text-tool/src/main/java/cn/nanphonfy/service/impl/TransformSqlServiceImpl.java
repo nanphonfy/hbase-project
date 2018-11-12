@@ -24,12 +24,12 @@ public class TransformSqlServiceImpl implements TransformSqlService {
      */
     @Override
     public void transformSqlofHealthQuestionnaireClassification(List<HealthQuestionnaireClassification> healthQuestionnaireClassifications,String filePath) {
-        String tableName = "nbudata.uw_questionaire_cat";
+        String tableName = "nburule.uw_questionaire_cat";
         String columns = "id,category,option_id,parent_id,cat_order,icd10_code,generic_title,is_valid,version,created_date,created_user,updated_date,updated_user";
 
         TextFileUtil textFileUtil = new TextFileUtil(filePath);
         for(HealthQuestionnaireClassification obj:healthQuestionnaireClassifications){
-            String values = String.format("'%s','%s',%s,%s,%s,'%s','%s','%s','%s',%s,'%s',%s,'%s'", obj.getId(),
+            String values = String.format("'%s','%s',%s,'%s',%s,'%s','%s','%s','%s',%s,'%s',%s,'%s'", obj.getId(),
                     obj.getClassification(), obj.getChoiceId(), obj.getParentId(), obj.getSequence(), obj.getICD10(),
                     obj.getCommonAppellation(), IS_VALID, VERSION, SYSDATE, SYSUSER, SYSDATE, SYSUSER);
             //如果字符串为null，则去掉''
@@ -42,14 +42,14 @@ public class TransformSqlServiceImpl implements TransformSqlService {
 
     @Override
     public void transformSqlofQuestion(List<Question> questions,String filePath) {
-        String tableName="nbudata.uw_health_questions";
+        String tableName="nburule.uw_health_questions";
         String columns="id,question_content,question_order,question_type,parent_id,questionnaire_cat,version,created_date,updated_date,created_user,updated_user";
 
         TextFileUtil textFileUtil = new TextFileUtil(filePath);
         for(Question obj:questions){
-            String values = String.format("%s,'%s',%s,%s,%s,'%s','%s',%s,'%s',%s,'%s'", obj.getId(), obj.getContent(),
+            String values = String.format("%s,'%s',%s,%s,%s,'%s','%s',%s,%s,'%s','%s'", obj.getId(), obj.getContent(),
                     obj.getSequence(), obj.getType(), obj.getParentId(), obj.getClassificationId(), VERSION, SYSDATE,
-                    SYSUSER, SYSDATE, SYSUSER);
+                     SYSDATE,SYSUSER, SYSUSER);
             //如果字符串为null，则去掉''
             String sqlScript = getSqlScript(tableName,columns,values).replace("'null'","null");
             textFileUtil.writeLine(sqlScript,textFileUtil.getBufferedWriter());
@@ -59,15 +59,15 @@ public class TransformSqlServiceImpl implements TransformSqlService {
 
     @Override
     public void transformSqlofChoice(List<Choice> choices,String filePath) {
-        String tableName="uw_health_options";
-        String columns="id,question_id,option_type,option_content,option_order,option_cat,mandatory,parent_id,display_sentence,version,created_date,updated_date,created_user,updated_user";
+        String tableName="nburule.uw_health_options";
+        String columns="id,question_id,option_type,option_content,option_order,option_cat,mandatory,parent_id,display_sentence,version,created_date,created_user,updated_date,updated_user";
 
         TextFileUtil textFileUtil = new TextFileUtil(filePath);
         for(Choice obj:choices){
             String values = String
                     .format("%s,%s,%s,'%s',%s,%s,'%s',%s,'%s','%s',%s,'%s',%s,'%s'", obj.getId(), obj.getQuestionId(),
                             obj.getType(), obj.getContent(), obj.getSequence(), obj.getCategory(), obj.getRequired(),
-                            obj.getParentId(), obj.getPromptTerm(), VERSION, SYSDATE, SYSDATE, SYSUSER, SYSUSER);
+                            obj.getParentId(), obj.getPromptTerm(), VERSION, SYSDATE,SYSUSER, SYSDATE, SYSUSER);
             //如果字符串为null，则去掉''
             String sqlScript = getSqlScript(tableName, columns, values).replace("'null'", "null");
             textFileUtil.writeLine(sqlScript,textFileUtil.getBufferedWriter());
@@ -77,19 +77,19 @@ public class TransformSqlServiceImpl implements TransformSqlService {
 
     @Override
     public void transformSqlofMedicalInsuranceRule(List<MedicalInsuranceRule> medicalInsuranceRules,String filePath) {
-        String tableName = "uw_medical_uw_rules";
-        String columns = "id,cat_id,rule_level,question_id_1,option_id_1,ans_1,question_id_2,option_id_2,ans_2,question_id_3,option_id_3,ans_3,question_id_4,option_id_4,ans_4,medical_uw_result,result_code,risk_desc,serious_illness,lifeins_comment,addtion_content,created_date,created_user,updated_date,updated_user";
+        String tableName = "nburule.uw_medical_uw_rules";
+        String columns = "id,cat_id,rule_level,question_id_1,option_id_1,ans_1,question_id_2,option_id_2,ans_2,question_id_3,option_id_3,ans_3,question_id_4,option_id_4,ans_4,medical_uw_result,result_code,risk_desc,serious_illness,lifeins_comment,addtion_content,version,created_date,created_user,updated_date,updated_user";
 
         TextFileUtil textFileUtil = new TextFileUtil(filePath);
         for (MedicalInsuranceRule obj : medicalInsuranceRules) {
             String values = String
-                    .format("%s,'%s',%s,%s,%s,'%s',%s,%s,'%s',%s,%s,'%s',%s,%s,'%s','%s','%s','%s','%s','%s','%s',%s,'%s'，%s,'%s'",
+                    .format("%s,'%s',%s,%s,%s,'%s',%s,%s,'%s',%s,%s,'%s',%s,%s,'%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s'，%s,'%s'",
                             obj.getId(), obj.getClassificationId(), obj.getLevelCount(), obj.getQuestionId1(),
                             obj.getChoiceId1(), obj.getAnswer1(), obj.getQuestionId2(), obj.getChoiceId2(),
                             obj.getAnswer2(), obj.getQuestionId3(), obj.getChoiceId3(), obj.getAnswer3(),
                             obj.getQuestionId4(), obj.getChoiceId4(), obj.getAnswer4(), obj.getMedicalUnderwriting(),
                             obj.getResultCode(), obj.getRiskDepiction(), obj.getSeriousHealthAdvice(),
-                            obj.getLifeInsuranceAdvice(), obj.getAdditionalComment(), SYSDATE, SYSUSER, SYSDATE,
+                            obj.getLifeInsuranceAdvice(), obj.getAdditionalComment(),obj.getVersion(), SYSDATE, SYSUSER, SYSDATE,
                             SYSUSER);
             //如果字符串为null，则去掉''
             String sqlScript = getSqlScript(tableName, columns, values).replace("'null'", "null");

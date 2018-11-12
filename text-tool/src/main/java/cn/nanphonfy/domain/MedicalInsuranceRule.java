@@ -33,6 +33,15 @@ public class MedicalInsuranceRule {
     private String lifeInsuranceAdvice;
     //    补充意见
     private String additionalComment;
+    private String version;
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     public String getAnswer4() {
         return answer4;
