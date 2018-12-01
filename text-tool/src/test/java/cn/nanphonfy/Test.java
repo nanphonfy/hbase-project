@@ -31,7 +31,7 @@ public class Test {
     private static final String SQL_FILE_PATH_2 = "C:\\Users\\NAN\\Desktop\\data\\uw_health_questions.sql";
     private static final String SQL_FILE_PATH_3 = "C:\\Users\\NAN\\Desktop\\data\\uw_health_options.sql";
     private static final String SQL_FILE_PATH_4 = "C:\\Users\\NAN\\Desktop\\data\\uw_medical_uw_rules.sql";*/
-    private static final String EXCEL_FILE_PATH = "D:\\code\\text-code\\重新整理-问卷-v1.0.1.xlsx";
+    private static final String EXCEL_FILE_PATH = "D:\\code\\text-code\\重新整理-问卷-v1.0.2.xlsx";
     private static final String SQL_FILE_PATH_1 = "D:\\code\\text-code\\uw_questionaire_cat.sql";
     private static final String SQL_FILE_PATH_2 = "D:\\code\\text-code\\uw_health_questions.sql";
     private static final String SQL_FILE_PATH_3 = "D:\\code\\text-code\\uw_health_options.sql";

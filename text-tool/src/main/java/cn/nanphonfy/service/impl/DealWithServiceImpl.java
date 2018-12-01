@@ -124,7 +124,7 @@ public class DealWithServiceImpl implements DealWithService {
         DealWithService dealWithService = new DealWithServiceImpl();
         //得到已有病种的id->obj
         Map<String, HealthQuestionnaireClassification> map =dealWithService.getHealthQuestionnaireClassificationMap(healthQuestionnaireClassifications);
-        System.out.println(map.get("0010102"));
+        System.out.println(map.get("0010100"));
         File newFile = null;
         try {
             newFile = new File(filePath);
@@ -133,20 +133,21 @@ public class DealWithServiceImpl implements DealWithService {
             String line = "";
             while ((line = br.readLine()) != null) {
                 System.out.println(line);
-                String[] arr = line.split("、");
+                String[] arr = line.split("\\|");
                 for(int i=1;i<arr.length;i++){
                     try {
                         HealthQuestionnaireClassification  obj= new HealthQuestionnaireClassification();
-                        obj.setParentId(("0"+arr[0]));
+                        obj.setParentId((arr[0]));
                         obj.setId(StringUtil.getSequenceId(obj.getParentId(),i,-1));
                         obj.setClassification(StringUtil.removeDigital(arr[i]));
-                        //解决0010102无法解析的问题
-                        /*if(map.get(obj.getParentId()) == null){
-                            HealthQuestionnaireClassification temp = map.get("0010102");
+                        //解决0010100无法解析的问题
+                        if(map.get(obj.getParentId()) == null){
+                            HealthQuestionnaireClassification temp = map.get("0010100");
                             obj.setChoiceId(temp.getChoiceId());
                         }else {
-                        }*/
-                        obj.setChoiceId(map.get(obj.getParentId()).getChoiceId());
+                            //System.out.println(map.get(obj.getParentId()).getChoiceId()+","+obj.getParentId());
+                            obj.setChoiceId(map.get(obj.getParentId()).getChoiceId());
+                        }
                         //顺序
                         obj.setSequence(String.valueOf(i));
 

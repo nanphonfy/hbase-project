@@ -20,6 +20,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     private static final Logger logger = LoggerFactory.getLogger(QuestionnaireServiceImpl.class);
     private static final String PREFIX = "001";
     private static final String OTHER = "其他";
+    private static final String OTHER_SEQ = "999";
     private static final String QUESTION_TYPE_INTERACTIVE = "1";
     private static final String QUESTION_TYPE_OTHER = "2";
     private static final String CHOICE_TYPE_SINGLE = "1";
@@ -33,10 +34,12 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     public List<HealthQuestionnaireClassification> parseHealthQuestionnaireClassification(List<InteractiveQuestionnaire> questions) {
         List<String> firstList = questions.stream().map(s -> s.getClassification()).distinct()
                 .collect(Collectors.toList());
+        List<String> secondList = questions.stream().map(s -> s.getHealthEnquirie()).distinct().collect(Collectors.toList());
         List<String> thirdList = questions.stream().map(s -> s.getLevel3Name()).distinct().collect(Collectors.toList());
 
         List<HealthQuestionnaireClassification> firstNewList = new ArrayList();
         List<HealthQuestionnaireClassification> seconndNewList = new ArrayList();
+        List<HealthQuestionnaireClassification> ThridNewList = new ArrayList();
 
         int firstrow = 1;
         int choiceId = 1017;
@@ -51,19 +54,11 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
                 //匹配到分类
                 if (!StringUtil.isEmpty(obj.getClassification()) && obj.getClassification().equals(classification)) {
                     HealthQuestionnaireClassification classification1 = new HealthQuestionnaireClassification();
-                    classification1.setId(StringUtil.getSequenceId(PREFIX, firstrow, i, -1));
+                    classification1.setId(StringUtil.getSequenceId(PREFIX, firstrow, -1, -1));
                     classification1.setClassification(classification);
                     classification1.setChoiceId(""+choiceId);
                     classification1.setParentId(Constant.PARENT_ID);
                     firstNewList.add(classification1);
-
-                    i++;
-                    HealthQuestionnaireClassification classification2 = new HealthQuestionnaireClassification();
-                    classification2.setId(StringUtil.getSequenceId(PREFIX, firstrow, i, -1));
-                    classification2.setClassification(OTHER);
-                    classification2.setChoiceId(""+choiceId);
-                    classification2.setParentId(Constant.PARENT_ID);
-                    firstNewList.add(classification2);
                     choiceId++;
                     break;
                 }
@@ -73,6 +68,69 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
         //系统类型计数器，用于生成主键策略
         Map<String, Integer> classificationCountMap = new HashMap<>();
+        //用户判断是否生成其他
+        Map<String, Integer> classificationMap = new HashMap<>();
+        //遍历询问告知->181129
+        for (String healthEnquirie : secondList) {
+            //false为还未添加其他的询问事项
+            //遍历第一层 系统分类
+            for (InteractiveQuestionnaire obj : questions) {
+                //匹配到【健康询问告知】，取对应的parentId并对ICD10分类
+                if (!StringUtil.isEmpty(obj.getHealthEnquirie()) && obj.getHealthEnquirie().equals(healthEnquirie)) {
+                    //遍历系统类型
+                    for (HealthQuestionnaireClassification firstObj : firstNewList) {
+                        //系统类型匹配，则进入健康询问告知匹配
+                        //获取相同的系统类型，抓出父ID
+                        if (firstObj.getClassification().equals(obj.getClassification())) {
+                            //询问告知：病种层有多层，则累加
+                            String key = obj.getClassification();
+                            if (classificationCountMap.containsKey(key)) {
+                                classificationCountMap.put(key, classificationCountMap.get(key) + 1);
+                                classificationMap.put(key, classificationMap.get(key) + 1);
+                            } else {
+                                classificationCountMap.put(key, 1);
+                                classificationMap.put(key,1);
+                            }
+
+                            ///////////////////////////////////////////////////////////////////
+                            if(classificationMap.get(key) == 1){
+                                HealthQuestionnaireClassification classification2 = new HealthQuestionnaireClassification();
+                                classification2.setId(StringUtil.getSequenceId(firstObj.getId(), 0, -1, -1));
+                                classification2.setClassification(OTHER);
+                                classification2.setChoiceId(firstObj.getChoiceId());
+                                classification2.setParentId(firstObj.getId());
+                                classification2.setSequence(OTHER_SEQ);
+                                classification2.setInquires(obj.getHealthEnquirie());
+                                seconndNewList.add(classification2);
+                            }
+                            ///////////////////////////////////////////////////////////////////
+                            //封装
+                            HealthQuestionnaireClassification classification1 = new HealthQuestionnaireClassification();
+                            classification1.setId(StringUtil.getSequenceId(firstObj.getId(), classificationCountMap.get(key), -1, -1));
+                            classification1.setClassification(healthEnquirie);
+                            classification1.setParentId(firstObj.getId());
+                            classification1.setChoiceId(firstObj.getChoiceId());
+                            /*classification1.setCommonAppellation(obj.getCommonAppellation());*/
+                            //顺序
+                            classification1.setSequence(String.valueOf(classificationCountMap.get(key)));
+
+                            /*String icd10 = obj.getICD10Code();
+                            //转换成我们想要的ICD10
+                            classification1.setICD10(icd10.substring(icd10.indexOf("[")).replace("[", "").replace("]", ""));
+                            System.out.println("update uw_questionaire_cat set inquiries = '" + obj.getHealthEnquirie() + "' where id=" + classification1.getId() + ";");*/
+                            seconndNewList.add(classification1);
+
+                            choiceId++;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        //系统类型计数器，用于生成主键策略
+        classificationCountMap = new HashMap<>();
         /*A | AA  -> A,B
         A | AB   ->AA,AB,BA,BB->AA A +1,AB A +2....
         A | AB
@@ -86,11 +144,11 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
                 //匹配到病种，取对应的parentId并对ICD10分类
                 if (!StringUtil.isEmpty(obj.getLevel3Name()) && obj.getLevel3Name().equals(level3Name)) {
                     //遍历系统类型
-                    for (HealthQuestionnaireClassification firstObj : firstNewList) {
+                    for (HealthQuestionnaireClassification secondObj : seconndNewList) {
                         //获取相同的系统类型，抓出父ID
-                        if (firstObj.getClassification().equals(obj.getClassification())) {
+                        if (secondObj.getClassification().equals(obj.getHealthEnquirie())) {
                             //三级病种层有多层，则累加
-                            String key = obj.getClassification();
+                            String key = obj.getHealthEnquirie();
                             if (classificationCountMap.containsKey(key)) {
                                 classificationCountMap.put(key, classificationCountMap.get(key) + 1);
                             } else {
@@ -100,19 +158,19 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
                             //封装
                             HealthQuestionnaireClassification classification1 = new HealthQuestionnaireClassification();
                             classification1.setId(StringUtil
-                                    .getSequenceId(firstObj.getId(), classificationCountMap.get(key), -1, -1));
+                                    .getSequenceId(secondObj.getId(), classificationCountMap.get(key), -1, -1));
                             classification1.setClassification(level3Name);
-                            classification1.setParentId(firstObj.getId());
-                            classification1.setChoiceId(firstObj.getChoiceId());
+                            classification1.setParentId(secondObj.getId());
+                            classification1.setChoiceId(secondObj.getChoiceId());
                             classification1.setCommonAppellation(obj.getCommonAppellation());
                             //顺序
                             classification1.setSequence(String.valueOf(classificationCountMap.get(key)));
 
                             String icd10 = obj.getICD10Code();
                             //转换成我们想要的ICD10
-                            classification1
-                                    .setICD10(icd10.substring(icd10.indexOf("[")).replace("[", "").replace("]", ""));
-                            seconndNewList.add(classification1);
+                            classification1.setICD10(icd10.substring(icd10.indexOf("[")).replace("[", "").replace("]", ""));
+                            System.out.println("update uw_questionaire_cat set inquiries = '" + obj.getHealthEnquirie() + "' where id=" + classification1.getId() + ";");
+                            ThridNewList.add(classification1);
                             break;
                         }
                     }
@@ -124,6 +182,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         List<HealthQuestionnaireClassification> healthQuestionnaireClassifications = new ArrayList<>();
         healthQuestionnaireClassifications.addAll(firstNewList);
         healthQuestionnaireClassifications.addAll(seconndNewList);
+        healthQuestionnaireClassifications.addAll(ThridNewList);
 
         //logger.info(FastJsonUtil.toJson(healthQuestionnaireClassifications));
         return healthQuestionnaireClassifications;
@@ -329,7 +388,8 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
                 continue;
             }
 
-            String levelQuestionStr = questionnaire.getFirstLevelQuestion();
+            //防止相同病种的问题一样 181130
+            String levelQuestionStr = questionnaire.getFirstLevelQuestion() + "_" + questionnaire.getLevel3Name();
             String parentId=null;
             String sequence = "1";
             //还未保存的问题
@@ -351,7 +411,8 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
             if (StringUtil.isEmpty(questionnaire.getSecondLevelQuestion())) {
                 continue;
             }
-            levelQuestionStr = questionnaire.getSecondLevelQuestion();
+            //防止相同病种的问题一样 181130
+            levelQuestionStr = questionnaire.getSecondLevelQuestion() + "_" + questionnaire.getLevel3Name();
             parentId=question1.getId();
             sequence = "2";
             //还未保存的问题
@@ -373,7 +434,8 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
             if (StringUtil.isEmpty(questionnaire.getThirdLevelQuestion())) {
                 continue;
             }
-            levelQuestionStr = questionnaire.getThirdLevelQuestion();
+            //防止相同病种的问题一样 181130
+            levelQuestionStr = questionnaire.getThirdLevelQuestion()+ "_" + questionnaire.getLevel3Name();
             parentId=question2.getId();
             sequence = "3";
             //还未保存的问题
@@ -407,7 +469,9 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
         // 健康问卷分类表
         for (HealthQuestionnaireClassification classification : healthQuestionnaireClassifications) {
-            classificationMap.put(classification.getClassification(), classification.getId());
+            if(classification.getId().length() > 7){
+                classificationMap.put(classification.getClassification(), classification.getId());
+            }
         }
         // 问题表
         for (Question question : newQuestionList) {
@@ -593,7 +657,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         if (levelQuestionMap.get(levelQuestionStr) == null) {
             question.setId(questionId);
             question.setClassificationId(questionnaire.getLevel3Name());
-            question.setContent(levelQuestionStr);
+            question.setContent(levelQuestionStr.split("_")[0]);
             question.setParentId(StringUtil.isEmpty(parentId)?"0":parentId);
             // 问题类型(普通|特殊)
             question.setType(questionType);
